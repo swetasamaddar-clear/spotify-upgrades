@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import PlaylistSection from "@/components/PlaylistSection";
 import { toast } from "@/hooks/use-toast";
@@ -104,12 +105,15 @@ const mockPlaylists = {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const handlePlaylistClick = (playlist: any) => {
     toast({
-      title: "Playing playlist",
-      description: `Now playing: ${playlist.title}`,
+      title: "Opening playlist",
+      description: `Loading: ${playlist.title}`,
     });
     console.log("Clicked playlist:", playlist);
+    navigate(`/playlist/${playlist.id}`);
   };
 
   return (
