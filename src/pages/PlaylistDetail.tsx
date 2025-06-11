@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Play, MessageCircle, ArrowLeft, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ interface ChatMessage {
   username: string;
   message: string;
   timestamp: string;
+  isStreaming?: boolean;
 }
 
 const mockSongs: Song[] = [
@@ -73,6 +74,24 @@ const mockPlaylistData: { [key: string]: any } = {
   }
 };
 
+const streamingMessages = [
+  "This beat is incredible! 🔥",
+  "Anyone else getting goosebumps?",
+  "Perfect study music",
+  "This reminds me of summer vibes ☀️",
+  "Can't stop listening to this playlist",
+  "The bass drop though... 🎵",
+  "This is my new favorite song!",
+  "Spotify recommendations are getting better",
+  "Playing this on repeat all day",
+  "Such a vibe! 💫"
+];
+
+const mockUsernames = [
+  "MusicLover23", "VinylCollector", "BeatDropper", "MelodyFan", "SoundWave",
+  "AudioPhile", "TuneSeeker", "RhythmMaster", "HarmonyHunter", "BassBeast"
+];
+
 const PlaylistDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -92,8 +111,43 @@ const PlaylistDetail = () => {
       timestamp: "2:32 PM"
     }
   ]);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const playlist = mockPlaylistData[id || "1"];
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+
+  // Simulate streaming messages when chat is opened
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (showChat && isStreaming) {
+      interval = setInterval(() => {
+        const randomMessage = streamingMessages[Math.floor(Math.random() * streamingMessages.length)];
+        const randomUsername = mockUsernames[Math.floor(Math.random() * mockUsernames.length)];
+        
+        const newStreamingMessage: ChatMessage = {
+          id: Date.now().toString(),
+          username: randomUsername,
+          message: randomMessage,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isStreaming: true
+        };
+        
+        setChatMessages(prev => [...prev, newStreamingMessage]);
+      }, 2000 + Math.random() * 3000); // Random interval between 2-5 seconds
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [showChat, isStreaming]);
 
   const handlePlayPlaylist = () => {
     toast({
@@ -101,6 +155,19 @@ const PlaylistDetail = () => {
       description: `Now playing: ${playlist.title}`,
     });
     console.log("Playing playlist:", playlist);
+  };
+
+  const handleChatToggle = () => {
+    setShowChat(!showChat);
+    if (!showChat) {
+      setIsStreaming(true);
+      toast({
+        title: "Live Chat Opened",
+        description: "Join the conversation with other listeners!",
+      });
+    } else {
+      setIsStreaming(false);
+    }
   };
 
   const handleSendMessage = () => {
@@ -156,11 +223,14 @@ const PlaylistDetail = () => {
               <Button
                 variant="outline"
                 size="lg"
-                onClick={() => setShowChat(!showChat)}
-                className="rounded-full px-8"
+                onClick={handleChatToggle}
+                className="rounded-full px-8 relative"
               >
                 <MessageCircle className="h-5 w-5 mr-2" />
-                Chat
+                Live Chat
+                {isStreaming && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                )}
               </Button>
             </div>
           </div>
@@ -205,30 +275,50 @@ const PlaylistDetail = () => {
             </div>
           </div>
 
-          {/* Chat Panel */}
+          {/* Live Chat Panel */}
           {showChat && (
             <div className="lg:col-span-1">
-              <Card className="h-96">
+              <Card className="h-[500px]">
                 <CardContent className="p-0 h-full flex flex-col">
                   <div className="p-4 border-b border-border/50">
-                    <h3 className="font-semibold">Playlist Chat</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Chat with other listeners
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold">Live Chat</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {chatMessages.length} listeners chatting
+                        </p>
+                      </div>
+                      {isStreaming && (
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                          <span className="text-xs text-red-500 font-medium">LIVE</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  <div 
+                    ref={chatContainerRef}
+                    className="flex-1 overflow-y-auto p-4 space-y-3 scroll-smooth"
+                  >
                     {chatMessages.map((msg) => (
-                      <div key={msg.id} className="space-y-1">
+                      <div 
+                        key={msg.id} 
+                        className={`space-y-1 animate-in slide-in-from-bottom-2 duration-300 ${
+                          msg.isStreaming ? 'opacity-90' : ''
+                        }`}
+                      >
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-primary">
+                          <span className={`text-sm font-medium ${
+                            msg.username === 'You' ? 'text-primary' : 'text-accent-foreground'
+                          }`}>
                             {msg.username}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {msg.timestamp}
                           </span>
                         </div>
-                        <p className="text-sm text-foreground">{msg.message}</p>
+                        <p className="text-sm text-foreground leading-relaxed">{msg.message}</p>
                       </div>
                     ))}
                   </div>
@@ -236,7 +326,7 @@ const PlaylistDetail = () => {
                   <div className="p-4 border-t border-border/50">
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Type a message..."
+                        placeholder="Say something..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
