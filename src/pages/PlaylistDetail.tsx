@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Play, MessageCircle, ArrowLeft, Settings, Shield } from "lucide-react";
@@ -190,6 +189,7 @@ const PlaylistDetail = () => {
   };
 
   const handleChatToggle = () => {
+    console.log("Chat toggle clicked, current showChat:", showChat);
     setShowChat(!showChat);
     if (!showChat) {
       setIsStreaming(true);
@@ -197,8 +197,10 @@ const PlaylistDetail = () => {
         title: "Live Chat Opened",
         description: "Join the conversation with other listeners!",
       });
+      console.log("Chat opened, streaming started");
     } else {
       setIsStreaming(false);
+      console.log("Chat closed, streaming stopped");
     }
   };
 
@@ -357,9 +359,9 @@ const PlaylistDetail = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className={`grid gap-8 ${showChat ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1'}`}>
           {/* Songs List */}
-          <div className="lg:col-span-2">
+          <div className={showChat ? 'lg:col-span-2' : 'col-span-1'}>
             <div className="space-y-2">
               <div className="grid grid-cols-[auto_1fr_auto] gap-4 px-4 py-2 text-sm text-muted-foreground border-b border-border/50">
                 <span>#</span>
