@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Play, MessageCircle, ArrowLeft, Settings, Shield } from "lucide-react";
+import { Play, MessageCircle, ArrowLeft, Settings, Shield, Minimize, X, Maximize, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
@@ -96,6 +95,8 @@ const PlaylistDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showChat, setShowChat] = useState(false);
+  const [chatMinimized, setChatMinimized] = useState(false);
+  const [chatFullscreen, setChatFullscreen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [replyTo, setReplyTo] = useState<{ id: string; username: string } | undefined>();
@@ -204,6 +205,8 @@ const PlaylistDetail = () => {
     setShowChat(!showChat);
     if (!showChat) {
       setIsStreaming(true);
+      setChatMinimized(false);
+      setChatFullscreen(false);
       toast({
         title: "Live Chat Opened",
         description: "Join the conversation with other listeners!",
@@ -211,7 +214,27 @@ const PlaylistDetail = () => {
       console.log("Chat opened, streaming started");
     } else {
       setIsStreaming(false);
+      setChatMinimized(false);
+      setChatFullscreen(false);
       console.log("Chat closed, streaming stopped");
+    }
+  };
+
+  const handleChatMinimize = () => {
+    setChatMinimized(!chatMinimized);
+  };
+
+  const handleChatClose = () => {
+    setShowChat(false);
+    setIsStreaming(false);
+    setChatMinimized(false);
+    setChatFullscreen(false);
+  };
+
+  const handleChatFullscreen = () => {
+    setChatFullscreen(!chatFullscreen);
+    if (!chatFullscreen) {
+      setChatMinimized(false);
     }
   };
 
@@ -320,6 +343,94 @@ const PlaylistDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Fullscreen Chat Overlay */}
+      {showChat && chatFullscreen && (
+        <div className="fixed inset-0 z-50 bg-background">
+          <Card className="h-full rounded-none border-0">
+            <CardContent className="p-0 h-full flex flex-col">
+              <div className="p-4 border-b border-border/50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-lg">Live Chat - Fullscreen</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {chatMessages.length} messages
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {isCurrentUserModerator && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setShowModerationPanel(true)}
+                      >
+                        <Shield className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleChatFullscreen}
+                      title="Exit fullscreen"
+                    >
+                      <Minimize2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleChatClose}
+                      title="Close chat"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    {isStreaming && (
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs text-red-500 font-medium">LIVE</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div 
+                ref={chatContainerRef}
+                className="flex-1 overflow-y-auto p-4 scroll-smooth"
+              >
+                {chatMessages.map((msg) => (
+                  <ChatMessageComponent
+                    key={msg.id}
+                    message={msg}
+                    currentUser={currentUser}
+                    onReply={handleReply}
+                    onReact={handleReact}
+                    onReport={handleReport}
+                    onModerate={handleModerate}
+                    isCurrentUserModerator={isCurrentUserModerator}
+                  />
+                ))}
+              </div>
+              
+              <div className="p-4 border-t border-border/50">
+                <ChatInput
+                  onSendMessage={handleSendMessage}
+                  replyTo={replyTo}
+                  onClearReply={() => setReplyTo(undefined)}
+                  placeholder={moderationSettings.mutedUsers.includes(currentUser) ? "You are muted" : "Say something..."}
+                  disabled={moderationSettings.mutedUsers.includes(currentUser)}
+                />
+              </div>
+            </CardContent>
+            
+            <ChatModerationPanel
+              settings={moderationSettings}
+              onSettingsChange={saveModerationSettings}
+              isVisible={showModerationPanel}
+              onClose={() => setShowModerationPanel(false)}
+            />
+          </Card>
+        </div>
+      )}
+
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 px-6 py-4">
         <Button
           variant="ghost"
@@ -370,9 +481,9 @@ const PlaylistDetail = () => {
           </div>
         </div>
 
-        <div className={`grid gap-8 ${showChat ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1'}`}>
+        <div className={`grid gap-8 ${showChat && !chatFullscreen ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1'}`}>
           {/* Songs List */}
-          <div className={showChat ? 'lg:col-span-2' : 'col-span-1'}>
+          <div className={showChat && !chatFullscreen ? 'lg:col-span-2' : 'col-span-1'}>
             <div className="space-y-2">
               <div className="grid grid-cols-[auto_1fr_auto] gap-4 px-4 py-2 text-sm text-muted-foreground border-b border-border/50">
                 <span>#</span>
@@ -409,21 +520,23 @@ const PlaylistDetail = () => {
             </div>
           </div>
 
-          {/* Live Chat Panel */}
-          {showChat && (
+          {/* Live Chat Panel - Regular/Minimized */}
+          {showChat && !chatFullscreen && (
             <div className="lg:col-span-1">
-              <Card className="h-[600px] relative">
+              <Card className={`${chatMinimized ? 'h-16' : 'h-[600px]'} relative transition-all duration-200`}>
                 <CardContent className="p-0 h-full flex flex-col">
                   <div className="p-4 border-b border-border/50">
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="font-semibold">Live Chat</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {chatMessages.length} messages
-                        </p>
+                        {!chatMinimized && (
+                          <p className="text-sm text-muted-foreground">
+                            {chatMessages.length} messages
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
-                        {isCurrentUserModerator && (
+                        {isCurrentUserModerator && !chatMinimized && (
                           <Button
                             size="sm"
                             variant="ghost"
@@ -432,6 +545,30 @@ const PlaylistDetail = () => {
                             <Shield className="h-4 w-4" />
                           </Button>
                         )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleChatFullscreen}
+                          title="Enter fullscreen"
+                        >
+                          <Maximize className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleChatMinimize}
+                          title={chatMinimized ? "Expand chat" : "Minimize chat"}
+                        >
+                          <Minimize className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleChatClose}
+                          title="Close chat"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                         {isStreaming && (
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
@@ -442,41 +579,47 @@ const PlaylistDetail = () => {
                     </div>
                   </div>
                   
-                  <div 
-                    ref={chatContainerRef}
-                    className="flex-1 overflow-y-auto p-2 scroll-smooth"
-                  >
-                    {chatMessages.map((msg) => (
-                      <ChatMessageComponent
-                        key={msg.id}
-                        message={msg}
-                        currentUser={currentUser}
-                        onReply={handleReply}
-                        onReact={handleReact}
-                        onReport={handleReport}
-                        onModerate={handleModerate}
-                        isCurrentUserModerator={isCurrentUserModerator}
-                      />
-                    ))}
-                  </div>
-                  
-                  <div className="p-4 border-t border-border/50">
-                    <ChatInput
-                      onSendMessage={handleSendMessage}
-                      replyTo={replyTo}
-                      onClearReply={() => setReplyTo(undefined)}
-                      placeholder={moderationSettings.mutedUsers.includes(currentUser) ? "You are muted" : "Say something..."}
-                      disabled={moderationSettings.mutedUsers.includes(currentUser)}
-                    />
-                  </div>
+                  {!chatMinimized && (
+                    <>
+                      <div 
+                        ref={chatContainerRef}
+                        className="flex-1 overflow-y-auto p-2 scroll-smooth"
+                      >
+                        {chatMessages.map((msg) => (
+                          <ChatMessageComponent
+                            key={msg.id}
+                            message={msg}
+                            currentUser={currentUser}
+                            onReply={handleReply}
+                            onReact={handleReact}
+                            onReport={handleReport}
+                            onModerate={handleModerate}
+                            isCurrentUserModerator={isCurrentUserModerator}
+                          />
+                        ))}
+                      </div>
+                      
+                      <div className="p-4 border-t border-border/50">
+                        <ChatInput
+                          onSendMessage={handleSendMessage}
+                          replyTo={replyTo}
+                          onClearReply={() => setReplyTo(undefined)}
+                          placeholder={moderationSettings.mutedUsers.includes(currentUser) ? "You are muted" : "Say something..."}
+                          disabled={moderationSettings.mutedUsers.includes(currentUser)}
+                        />
+                      </div>
+                    </>
+                  )}
                 </CardContent>
                 
-                <ChatModerationPanel
-                  settings={moderationSettings}
-                  onSettingsChange={saveModerationSettings}
-                  isVisible={showModerationPanel}
-                  onClose={() => setShowModerationPanel(false)}
-                />
+                {!chatMinimized && (
+                  <ChatModerationPanel
+                    settings={moderationSettings}
+                    onSettingsChange={saveModerationSettings}
+                    isVisible={showModerationPanel}
+                    onClose={() => setShowModerationPanel(false)}
+                  />
+                )}
               </Card>
             </div>
           )}
