@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Play, MessageCircle, ArrowLeft, Settings, Shield } from "lucide-react";
@@ -65,6 +66,11 @@ const mockPlaylistData: { [key: string]: any } = {
     title: "Today's Top Hits",
     description: "Jung Kook is on top of the Hottest 50!",
     imageUrl: "https://images.unsplash.com/photo-1571974599782-87624638275f?w=300&h=300&fit=crop"
+  },
+  "3": {
+    title: "RapCaviar",
+    description: "New music from Lil Baby, 21 Savage and more",
+    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=entropy"
   }
 };
 
@@ -106,7 +112,12 @@ const PlaylistDetail = () => {
     saveModerationSettings
   } = useChatPersistence(id || "1");
 
-  const playlist = mockPlaylistData[id || "1"];
+  const playlist = mockPlaylistData[id || "1"] || {
+    title: "Unknown Playlist",
+    description: "Playlist not found",
+    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
+  };
+  
   const currentUser = chatSettings.username;
   const isCurrentUserModerator = currentUser === "You" || currentUser.includes("Moderator");
 
