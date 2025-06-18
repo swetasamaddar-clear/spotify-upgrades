@@ -12,37 +12,37 @@ const mockPlaylists = {
       id: "1",
       title: "Liked Songs",
       description: "Made for you • 234 songs",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=face"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "2", 
       title: "Today's Top Hits",
       description: "Jung Kook is on top of the Hottest 50!",
-      imageUrl: "https://images.unsplash.com/photo-1571974599782-87624638275f?w=300&h=300&fit=crop"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "3",
       title: "RapCaviar", 
       description: "New music from Lil Baby, 21 Savage and more",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=entropy"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "4",
       title: "All Out 2010s",
       description: "The biggest songs of the 2010s",
-      imageUrl: "https://images.unsplash.com/photo-1618609378039-b572f64c5b42?w=300&h=300&fit=crop"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "5",
       title: "Rock Classics",
       description: "Rock legends & epic songs",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=top"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "6",
       title: "Chill Hits",
       description: "Kick back to the best new and recent chill hits",
-      imageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=300&h=300&fit=crop"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     }
   ],
   madeForYou: [
@@ -50,31 +50,31 @@ const mockPlaylists = {
       id: "7",
       title: "Discover Weekly",
       description: "Your weekly mixtape of fresh music",
-      imageUrl: "https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=300&h=300&fit=crop"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "8",
       title: "Release Radar", 
       description: "Catch all the latest music from artists you follow",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=left"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "9",
       title: "Daily Mix 1",
       description: "Post Malone, The Weeknd, Travis Scott and more",
-      imageUrl: "https://images.unsplash.com/photo-1574169208507-84376144848b?w=300&h=300&fit=crop"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "10", 
       title: "Daily Mix 2",
       description: "Billie Eilish, Olivia Rodrigo, Taylor Swift and more",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=right"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "11",
       title: "On Repeat",
       description: "Songs you can't stop playing",
-      imageUrl: "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?w=300&h=300&fit=crop"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     }
   ],
   topCharts: [
@@ -82,25 +82,25 @@ const mockPlaylists = {
       id: "12",
       title: "Top 50 - Global",
       description: "Your daily update of the most played tracks",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=bottom"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "13",
       title: "Top 50 - USA", 
       description: "Your daily update of the most played tracks",
-      imageUrl: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&h=300&fit=crop"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "14",
       title: "Viral 50 - Global",
       description: "Your daily update of the most viral tracks",
-      imageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=300&h=300&fit=crop&crop=entropy"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     },
     {
       id: "15",
       title: "New Music Friday",
       description: "The best new music, updated every Friday",
-      imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=face"
+      imageUrl: "https://source.unsplash.com/random/300x300/?love,romance"
     }
   ]
 };
@@ -118,19 +118,27 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-50">
       <Header />
       
       <main className="px-6 py-6">
         {/* Hero Section */}
         <section className="mb-8">
-          <div className="gradient-overlay rounded-lg p-8 mb-8">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4">
-              Good evening
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Let's find something for you to listen to
-            </p>
+          <div className="relative rounded-lg overflow-hidden mb-8">
+            <img
+              src="https://source.unsplash.com/600x200/?valentine,hearts"
+              alt="Love banner"
+              className="absolute inset-0 w-full h-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-red-500 opacity-70" />
+            <div className="relative p-8 z-10">
+              <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                Love is in the Air
+              </h1>
+              <p className="text-lg text-white">
+                Find the perfect love song for every moment
+              </p>
+            </div>
           </div>
         </section>
         <section className="mb-8">
