@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Play, MessageCircle, ArrowLeft, Settings, Shield, Minimize, X, Maximize, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -122,19 +122,19 @@ const PlaylistDetail = () => {
   const currentUser = chatSettings.username;
   const isCurrentUserModerator = currentUser === "You" || currentUser.includes("Moderator");
 
-  // Initialize chat with persisted history
+  // Initialize chat with persisted history - only once
   useEffect(() => {
     if (chatHistory.length > 0) {
       setChatMessages(chatHistory);
     } else {
       // Default messages if no history
-      setChatMessages([
+      const defaultMessages = [
         {
           id: "1",
           username: "MusicLover23",
           message: "This playlist is amazing! 🎵",
           timestamp: "2:30 PM",
-          userRole: 'user',
+          userRole: 'user' as const,
           avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=32&h=32&fit=crop&crop=face"
         },
         {
@@ -142,12 +142,13 @@ const PlaylistDetail = () => {
           username: "VinylCollector",
           message: "Anyone know if this is available on vinyl?",
           timestamp: "2:32 PM",
-          userRole: 'vip',
+          userRole: 'vip' as const,
           avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b988?w=32&h=32&fit=crop&crop=face"
         }
-      ]);
+      ];
+      setChatMessages(defaultMessages);
     }
-  }, [chatHistory]);
+  }, [chatHistory.length]); // Only depend on length to avoid infinite loops
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -156,12 +157,22 @@ const PlaylistDetail = () => {
     }
   }, [chatMessages]);
 
-  // Save messages to persistence whenever they change
+  // Memoize the save function to prevent infinite loops
+  const debouncedSaveChatHistory = useCallback((messages: ChatMessage[]) => {
+    const timeoutId = setTimeout(() => {
+      if (messages.length > 2) { // Only save if we have more than default messages
+        saveChatHistory(messages);
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [saveChatHistory]);
+
+  // Save messages to persistence when they change (but avoid infinite loops)
   useEffect(() => {
-    if (chatMessages.length > 0) {
-      saveChatHistory(chatMessages);
+    if (chatMessages.length > 2) { // Only save if we have real messages, not just defaults
+      debouncedSaveChatHistory(chatMessages);
     }
-  }, [chatMessages, saveChatHistory]);
+  }, [chatMessages, debouncedSaveChatHistory]);
 
   // Simulate streaming messages when chat is opened
   useEffect(() => {
