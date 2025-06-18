@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import PlaylistSection from "@/components/PlaylistSection";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 const mockPlaylists = {
   recentlyPlayed: [
@@ -130,6 +131,25 @@ const Index = () => {
             <p className="text-lg text-muted-foreground">
               Let's find something for you to listen to
             </p>
+          </div>
+        </section>
+        <section className="mb-8">
+          <div
+            className="relative rounded-lg overflow-hidden bg-pink-50 group cursor-pointer"
+            onClick={() => navigate("/melody-match")}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=600&h=200&fit=crop"
+              alt="Melody Match Banner"
+              className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity"
+            />
+            <div className="relative z-10 flex flex-col items-center justify-center py-12 px-6">
+              <h2 className="text-4xl font-bold text-red-600 mb-2">Melody Match</h2>
+              <p className="text-lg text-red-800 mb-4 text-center">
+                Swipe through love-themed playlists and find your perfect match!
+              </p>
+              <Button variant="outline">Play Now</Button>
+            </div>
           </div>
         </section>
 
