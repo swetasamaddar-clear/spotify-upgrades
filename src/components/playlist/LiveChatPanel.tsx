@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, memo } from "react";
 import { Shield, Maximize, Minimize, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,7 +29,7 @@ interface LiveChatPanelProps {
   saveModerationSettings: (settings: any) => void;
 }
 
-export const LiveChatPanel = ({
+export const LiveChatPanel = memo(({
   chatMessages,
   chatMinimized,
   isStreaming,
@@ -53,10 +53,18 @@ export const LiveChatPanel = ({
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    if (chatContainerRef.current && !chatMinimized) {
+      const container = chatContainerRef.current;
+      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+      
+      if (isNearBottom) {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
     }
-  }, [chatMessages]);
+  }, [chatMessages.length, chatMinimized]);
 
   return (
     <div className="lg:col-span-1">
@@ -121,6 +129,7 @@ export const LiveChatPanel = ({
               <div 
                 ref={chatContainerRef}
                 className="flex-1 overflow-y-auto p-2 scroll-smooth"
+                style={{ scrollBehavior: 'smooth' }}
               >
                 {chatMessages.map((msg) => (
                   <ChatMessageComponent
@@ -160,4 +169,6 @@ export const LiveChatPanel = ({
       </Card>
     </div>
   );
-};
+});
+
+LiveChatPanel.displayName = "LiveChatPanel";

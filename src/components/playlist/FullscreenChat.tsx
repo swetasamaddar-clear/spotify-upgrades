@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, memo } from "react";
 import { Shield, Minimize2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,7 +27,7 @@ interface FullscreenChatProps {
   saveModerationSettings: (settings: any) => void;
 }
 
-export const FullscreenChat = ({
+export const FullscreenChat = memo(({
   chatMessages,
   isStreaming,
   currentUser,
@@ -50,9 +50,17 @@ export const FullscreenChat = ({
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      const container = chatContainerRef.current;
+      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+      
+      if (isNearBottom) {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
     }
-  }, [chatMessages]);
+  }, [chatMessages.length]);
 
   return (
     <div className="fixed inset-0 z-50 bg-background">
@@ -105,6 +113,7 @@ export const FullscreenChat = ({
           <div 
             ref={chatContainerRef}
             className="flex-1 overflow-y-auto p-4 scroll-smooth"
+            style={{ scrollBehavior: 'smooth' }}
           >
             {chatMessages.map((msg) => (
               <ChatMessageComponent
@@ -140,4 +149,6 @@ export const FullscreenChat = ({
       </Card>
     </div>
   );
-};
+});
+
+FullscreenChat.displayName = "FullscreenChat";

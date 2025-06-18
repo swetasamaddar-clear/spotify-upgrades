@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { toast } from "@/hooks/use-toast";
 import { ChatMessage } from "@/components/chat/ChatMessage";
 import { useChatPersistence } from "@/hooks/useChatPersistence";
@@ -15,6 +15,7 @@ export const usePlaylistChat = (playlistId: string) => {
   const [showModerationPanel, setShowModerationPanel] = useState(false);
   const [lastMessageTime, setLastMessageTime] = useState(0);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const streamingIntervalRef = useRef<NodeJS.Timeout>();
 
   const {
     chatHistory,
@@ -54,42 +55,57 @@ export const usePlaylistChat = (playlistId: string) => {
     }
   }, [chatHistory.length]);
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
+  // Optimized auto-scroll with throttling
+  const scrollToBottom = useCallback(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [chatMessages]);
-
-  // Memoize the save function to prevent infinite loops
-  const debouncedSaveChatHistory = useCallback((messages: ChatMessage[]) => {
-    const timeoutId = setTimeout(() => {
-      if (messages.length > 2) {
-        saveChatHistory(messages);
+      const container = chatContainerRef.current;
+      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+      
+      if (isNearBottom) {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth'
+        });
       }
-    }, 500);
+    }
+  }, []);
+
+  // Throttled scroll effect
+  useEffect(() => {
+    const timeoutId = setTimeout(scrollToBottom, 100);
     return () => clearTimeout(timeoutId);
+  }, [chatMessages.length, scrollToBottom]);
+
+  // Memoized save function with proper debouncing
+  const debouncedSave = useMemo(() => {
+    let timeoutId: NodeJS.Timeout;
+    return (messages: ChatMessage[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (messages.length > 2) {
+          saveChatHistory(messages);
+        }
+      }, 1000); // Increased debounce time
+    };
   }, [saveChatHistory]);
 
-  // Save messages to persistence when they change
+  // Save messages with debouncing
   useEffect(() => {
     if (chatMessages.length > 2) {
-      debouncedSaveChatHistory(chatMessages);
+      debouncedSave(chatMessages);
     }
-  }, [chatMessages, debouncedSaveChatHistory]);
+  }, [chatMessages, debouncedSave]);
 
-  // Simulate streaming messages when chat is opened
+  // Optimized streaming messages with longer intervals
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
     if (showChat && isStreaming) {
-      interval = setInterval(() => {
+      streamingIntervalRef.current = setInterval(() => {
         const randomMessage = streamingMessages[Math.floor(Math.random() * streamingMessages.length)];
         const randomUsername = mockUsernames[Math.floor(Math.random() * mockUsernames.length)];
         const userRole = Math.random() > 0.9 ? 'moderator' : Math.random() > 0.8 ? 'vip' : 'user';
         
         const newStreamingMessage: ChatMessage = {
-          id: Date.now().toString(),
+          id: `${Date.now()}-${Math.random()}`,
           username: randomUsername,
           message: randomMessage,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -98,12 +114,18 @@ export const usePlaylistChat = (playlistId: string) => {
           avatar: `https://images.unsplash.com/photo-${1500000000 + Math.floor(Math.random() * 100000000)}?w=32&h=32&fit=crop&crop=face`
         };
         
-        setChatMessages(prev => [...prev, newStreamingMessage]);
-      }, 2000 + Math.random() * 3000);
+        setChatMessages(prev => {
+          // Limit total messages to prevent performance issues
+          const updated = [...prev, newStreamingMessage];
+          return updated.length > 100 ? updated.slice(-80) : updated;
+        });
+      }, 8000 + Math.random() * 7000); // Longer intervals: 8-15 seconds
     }
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (streamingIntervalRef.current) {
+        clearInterval(streamingIntervalRef.current);
+      }
     };
   }, [showChat, isStreaming]);
 
@@ -128,6 +150,9 @@ export const usePlaylistChat = (playlistId: string) => {
       setIsStreaming(false);
       setChatMinimized(false);
       setChatFullscreen(false);
+      if (streamingIntervalRef.current) {
+        clearInterval(streamingIntervalRef.current);
+      }
     }
   };
 
@@ -140,6 +165,9 @@ export const usePlaylistChat = (playlistId: string) => {
     setIsStreaming(false);
     setChatMinimized(false);
     setChatFullscreen(false);
+    if (streamingIntervalRef.current) {
+      clearInterval(streamingIntervalRef.current);
+    }
   };
 
   const handleChatFullscreen = () => {
@@ -177,7 +205,7 @@ export const usePlaylistChat = (playlistId: string) => {
     const isFiltered = !filterMessage(message);
     
     const newMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-user`,
       username: currentUser,
       message: isFiltered ? "[Message filtered]" : message,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
