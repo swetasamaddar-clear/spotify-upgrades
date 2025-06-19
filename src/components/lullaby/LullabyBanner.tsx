@@ -13,7 +13,7 @@ const LullabyBanner = () => {
   return (
     <section className="mb-8">
       <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-purple-900/80 via-blue-900/80 to-indigo-900/80 p-8">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="20" height="20" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="stars" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"%3E%3Ccircle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.1)"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100%25" height="100%25" fill="url(%23stars)"/%3E%3C/svg%3E')] opacity-30"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"20\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cdefs%3E%3Cpattern id=\"stars\" x=\"0\" y=\"0\" width=\"20\" height=\"20\" patternUnits=\"userSpaceOnUse\"%3E%3Ccircle cx=\"2\" cy=\"2\" r=\"1\" fill=\"rgba(255,255,255,0.1)\"/%%3E%3C/pattern%3E%3C/defs%3E%3Crect width=\"100%25\" height=\"100%25\" fill=\"url(%23stars)\"/%%3E%3C/svg%3E')] opacity-30"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between">
           <div className="flex-1 mb-6 md:mb-0">
