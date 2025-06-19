@@ -40,7 +40,7 @@ export const usePlaylistChat = (playlistId: string) => {
           message: "This playlist is amazing! 🎵",
           timestamp: "2:30 PM",
           userRole: 'user' as const,
-          avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=32&h=32&fit=crop&crop=face"
+          avatar: "/placeholder.svg"
         },
         {
           id: "2",
@@ -48,7 +48,7 @@ export const usePlaylistChat = (playlistId: string) => {
           message: "Anyone know if this is available on vinyl?",
           timestamp: "2:32 PM",
           userRole: 'vip' as const,
-          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b988?w=32&h=32&fit=crop&crop=face"
+          avatar: "/placeholder.svg"
         }
       ];
       setChatMessages(defaultMessages);
@@ -111,7 +111,7 @@ export const usePlaylistChat = (playlistId: string) => {
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isStreaming: true,
           userRole,
-          avatar: `https://images.unsplash.com/photo-${1500000000 + Math.floor(Math.random() * 100000000)}?w=32&h=32&fit=crop&crop=face`
+          avatar: "/placeholder.svg"
         };
         
         setChatMessages(prev => {
@@ -212,7 +212,7 @@ export const usePlaylistChat = (playlistId: string) => {
       userRole: isCurrentUserModerator ? 'moderator' : 'user',
       replyTo: replyToId,
       isFiltered,
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+      avatar: "/placeholder.svg"
     };
     
     setChatMessages(prev => [...prev, newMessage]);

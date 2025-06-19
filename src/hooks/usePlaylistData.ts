@@ -5,35 +5,35 @@ export const mockSongs = [
     title: "Blinding Lights",
     artist: "The Weeknd",
     duration: "3:20",
-    albumCover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop"
+    albumCover: "https://picsum.photos/seed/song5/100/100"
   },
   {
     id: "2",
     title: "Watermelon Sugar",
     artist: "Harry Styles",
     duration: "2:54",
-    albumCover: "https://images.unsplash.com/photo-1571974599782-87624638275f?w=100&h=100&fit=crop"
+    albumCover: "https://picsum.photos/seed/song2/100/100"
   },
   {
     id: "3",
     title: "Levitating",
     artist: "Dua Lipa",
     duration: "3:23",
-    albumCover: "https://images.unsplash.com/photo-1618609378039-b572f64c5b42?w=100&h=100&fit=crop"
+    albumCover: "https://picsum.photos/seed/song1/100/100"
   },
   {
     id: "4",
     title: "Good 4 U",
     artist: "Olivia Rodrigo",
     duration: "2:58",
-    albumCover: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=100&h=100&fit=crop"
+    albumCover: "https://picsum.photos/seed/song4/100/100"
   },
   {
     id: "5",
     title: "Stay",
     artist: "The Kid LAROI, Justin Bieber",
     duration: "2:21",
-    albumCover: "https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=100&h=100&fit=crop"
+    albumCover: "https://picsum.photos/seed/song3/100/100"
   }
 ];
 
@@ -41,17 +41,17 @@ export const mockPlaylistData: { [key: string]: any } = {
   "1": {
     title: "Liked Songs",
     description: "Made for you • 234 songs",
-    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=face"
+    imageUrl: "https://picsum.photos/seed/playlist1/300/300"
   },
   "2": {
     title: "Today's Top Hits",
     description: "Jung Kook is on top of the Hottest 50!",
-    imageUrl: "https://images.unsplash.com/photo-1571974599782-87624638275f?w=300&h=300&fit=crop"
+    imageUrl: "https://picsum.photos/seed/playlist2/300/300"
   },
   "3": {
     title: "RapCaviar",
     description: "New music from Lil Baby, 21 Savage and more",
-    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=entropy"
+    imageUrl: "https://picsum.photos/seed/playlist3/300/300"
   }
 };
 

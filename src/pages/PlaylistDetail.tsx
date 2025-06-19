@@ -17,7 +17,7 @@ const PlaylistDetail = () => {
   const playlist = mockPlaylistData[id || "1"] || {
     title: "Unknown Playlist",
     description: "Playlist not found",
-    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
+    imageUrl: "/placeholder.svg"
   };
 
   const {

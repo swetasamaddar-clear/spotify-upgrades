@@ -36,6 +36,7 @@ export const SongsList = ({ songs }: SongsListProps) => {
             <img
               src={song.albumCover}
               alt={song.title}
+              onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
               className="w-10 h-10 rounded object-cover"
             />
             <div>

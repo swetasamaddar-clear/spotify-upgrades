@@ -26,6 +26,7 @@ export const PlaylistHeader = ({
       <img
         src={playlist.imageUrl}
         alt={playlist.title}
+        onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
         className="w-64 h-64 object-cover rounded-lg shadow-xl"
       />
       <div className="space-y-4">
