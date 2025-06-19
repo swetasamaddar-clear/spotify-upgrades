@@ -30,11 +30,11 @@ const PlaylistCard = ({ title, description, imageUrl, onClick }: PlaylistCardPro
       </div>
       
       <div className="space-y-1">
-        <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm sm:text-base leading-tight line-clamp-2">
           {title}
         </h3>
         {description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-tight">
             {description}
           </p>
         )}

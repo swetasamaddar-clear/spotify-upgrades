@@ -121,14 +121,14 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="px-6 py-6">
+      <main className="px-4 sm:px-6 py-6 max-w-7xl mx-auto">
         {/* Hero Section */}
         <section className="mb-8">
-          <div className="gradient-overlay rounded-lg p-8 mb-8">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4">
+          <div className="gradient-overlay rounded-lg p-6 sm:p-8 mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-foreground mb-4 leading-tight">
               Good evening
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
               Let's find something for you to listen to
             </p>
           </div>
