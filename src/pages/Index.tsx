@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import PlaylistSection from "@/components/PlaylistSection";
+import LullabyBanner from "@/components/lullaby/LullabyBanner";
 import { toast } from "@/hooks/use-toast";
 
 const mockPlaylists = {
@@ -132,6 +133,9 @@ const Index = () => {
             </p>
           </div>
         </section>
+
+        {/* Lullaby Banner */}
+        <LullabyBanner />
 
         {/* Recently Played */}
         <PlaylistSection
