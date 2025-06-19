@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Waves, Moon, Clock } from "lucide-react";
+import { Heart, Waves, Moon } from "lucide-react";
 import { therapySessions } from "@/data/therapyContent";
 
 interface TherapyCategoriesProps {
@@ -73,10 +73,7 @@ const TherapyCategories = ({ onSessionSelect }: TherapyCategoriesProps) => {
                       <div className="font-medium">{session.title}</div>
                       <div className="text-sm text-white/60">{session.description}</div>
                     </div>
-                    <div className="flex items-center gap-1 text-white/60">
-                      <Clock className="h-4 w-4" />
-                      <span className="text-sm">{session.duration}min</span>
-                    </div>
+                    {/* Duration removed */}
                   </Button>
                 ))}
               </CardContent>
