@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,7 +22,7 @@ const AudioTherapyPlayer = ({ session, isPlaying, onPlayingChange }: AudioTherap
     startSession,
     pauseSession,
     stopSession
-  } = useAudioTherapy(selectedDuration * 60); // Convert minutes to seconds
+  } = useAudioTherapy(selectedDuration * 60, session.category); // Pass category to hook
 
   const handlePlay = () => {
     startSession();
@@ -131,9 +130,9 @@ const AudioTherapyPlayer = ({ session, isPlaying, onPlayingChange }: AudioTherap
       {/* Session Info */}
       <div className="mt-8 text-center">
         <p className="text-white/60">
-          {session.category === 'anxiety' && "Focus on your breathing and let go of tension"}
-          {session.category === 'stress' && "Allow your body to relax completely"}  
-          {session.category === 'sleep' && "Prepare your mind for restful sleep"}
+          {session.category === 'anxiety' && "🌸 Breathing tones to help calm your mind and release tension"}
+          {session.category === 'stress' && "🌊 Ocean wave sounds to wash away stress and promote relaxation"}  
+          {session.category === 'sleep' && "🌙 Deep, soothing tones to guide you into restful sleep"}
         </p>
       </div>
     </div>
